@@ -38,11 +38,13 @@ Server kısmında ;
 - Vue3 Composition Api
 
 ## Çalışma Şekli
-Donanım sensörlerden aldığı bilgileri belirli peryotlarla server kısmına uygun olay isimleri ve verileri ekleyerek gönderirken, yaklaşım sensöründen sinyal geldiği anda gönderme işlemini gerçekleştirir.
+Donanım sensörlerden aldığı bilgileri belirli peryotlarla server kısmına uygun olay isimleri ve verileri ekleyerek gönderirken, yaklaşım sensöründen sinyal geldiği anda gönderme işlemini gerçekleştirir. Random olarak oluışturulan değerlerden oluşan bir veri yapısıda kurgulanmış ve belirli süre aralıklarıyla gönderilmiştir.
 
-Kurgulanan yapıda donanım ve istemci kısım aynı odaya kayıt edilmiştir. Server ikisi arasında köprü görevi görür. Socket io 'nun iki yönlü iletişim özelliği sayesinde istemci ve donanım tarafından olay tabanlı olarak gönderilen veriler anında işlenebilmiştir.
+Donanım ve istemci kısım aynı odaya kayıt edilmiştir. Server ikisi arasında köprü görevi görür. Socket io 'nun iki yönlü iletişim özelliği sayesinde istemci ve donanım tarafından olay tabanlı olarak gönderilen veriler anında işlenebilmiştir.
 
 Yapılan saha çalışmasında cep telefonunun kablosuz modemi gördüğü her noktada iletişimin sağlandığı görülmüştür.
+
+Yerelde çalışırken cors ile ilgili problemler yaşanmıştır. Server ve istemci tarafında koda gerekli eklemeler ve düzenlemeler yapılmıştır.
 
 <p  align="center">
 <img src="img/istemci1.png" alt="pelus" width="500" style="margin-left:10px">
