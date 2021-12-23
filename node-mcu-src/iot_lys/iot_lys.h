@@ -1,14 +1,15 @@
 /* Some definitions and macros */
 
+#define TESTING true
 #define USE_SERIAL Serial  //Serial1
 
-#define SSID  "...."         // Enter SSID here
-#define PASSWORD "......"              //Enter Password here
+#define SSID  "Superbox_Wifi_4286"         // Enter SSID here
+#define PASSWORD "LB44wH34M3"              //Enter Password here
 
 //#define SSID  "Turknet"                     // Enter SSID here
 //#define PASSWORD "143db8ed43"              //Enter Password here
 
-#define SOCKET_SERVER_IP  "192.168.1.165" // 
+#define SOCKET_SERVER_IP  "192.168.1.165" //"192.168.1.124"
 #define SOCKET_PORT    3000
 #define SOCKET_VER_URL_EIO "/socket.io/?EIO=4"  //
 /*    EIO: the version of the protocol (currently, "4")
@@ -19,7 +20,7 @@
   it will likely fail the attempt to connect.
 */
 
-#define MAX_STRING_LEN 150
+#define MAX_STRING_LEN 50
 
 /* PINs*/
 #define LED_CONNECT_PIN D0

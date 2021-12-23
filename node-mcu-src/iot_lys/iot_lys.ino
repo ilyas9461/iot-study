@@ -1,5 +1,4 @@
 /*
-   WebSocketClientSocketIO.ino
    Node mcu ( ESP-12E ) communication with Socket-io node.js server.
    Event-based requests made by the client over socket-io are answered by the nodemcu.
    Some sensor information and random data are sent to the client in real time and
@@ -22,7 +21,7 @@
 #include "DHT.h"
 #include <Hash.h>
 
-#include "WebSocketClientSocketIO.h"
+#include "iot_lys.h"
 
 ESP8266WiFiMulti WiFiMulti;
 SocketIOclient socketIO;
@@ -40,10 +39,12 @@ bool isInfraredDataSend = false;
 int deviceId = 62164;
 String socketId = "";
 
+uint64_t now=0;
 unsigned long messageTimestamp = 0;
 unsigned long dhtMeasurementTime = 0;
 unsigned long anSensMeasurementTime = 0;
 unsigned long tagDataTime = 0;
+unsigned long sampleDataSendCount = 0;
 
 float humidity = 0.0;
 float temperature = 0.0;
@@ -51,7 +52,7 @@ float temperature = 0.0;
 void setup()
 {
   USE_SERIAL.begin(115200);
-  
+
   initializePins();
 
   Wire.begin(2, 0); // gpio 2 and gpio 0 which are D4, and D3
@@ -102,14 +103,14 @@ void setup()
   lcd.print("WiFi Connected");
   lcd.setCursor(0, 1);
   lcd.print(ip.c_str());
-  dhtMeasurementTime = anSensMeasurementTime = messageTimestamp = tagDataTime=millis();
+  dhtMeasurementTime = anSensMeasurementTime = messageTimestamp = tagDataTime = millis();
 } // setup
 
 void loop()
 {
   socketIO.loop();
 
-  uint64_t now = millis();
+  now = millis();
 
   if ((unsigned long)now - dhtMeasurementTime > 6000Lu)
   {
@@ -146,28 +147,37 @@ void loop()
     messageTimestamp = now; // reinitiliaze time stamp
   }
 
-  if((unsigned)now-tagDataTime>7000Lu){
+  if ((unsigned)now - tagDataTime > 7000Lu) {
     sendServerTagData();
-    tagDataTime=now;
+    tagDataTime = now;
   }
 
   if (!digitalRead(INFRARED_SENS_PIN))
   {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("INFRARED sens.");
-    lcd.setCursor(0, 1);
-    lcd.print("Object detected!");
+    if (!TESTING) {
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      lcd.print("INFRARED sens.");
+      lcd.setCursor(0, 1);
+      lcd.print("Object detected!");
 
-    if (!isInfraredDataSend) {
-      sendServerInfraredSensData(true);
-      isInfraredDataSend = true;
+      if (!isInfraredDataSend) {
+        sendServerInfraredSensData(true, false);
+        isInfraredDataSend = true;
+      }
+      if (!isInfraredDataSend) {
+        sendServerInfraredSensData(true,false);
+        isInfraredDataSend = true;
+      }
+      delay(100);
+    }else{
+       sampleDataSendCount++;
+       sendServerInfraredSensData(true,true); //TEST data
     }
-    delay(100);
 
   } else {
-    if (isInfraredDataSend) {
-      sendServerInfraredSensData(false);
+    if (isInfraredDataSend && !TESTING) {
+      sendServerInfraredSensData(false, false);
       isInfraredDataSend = false;
     }
   }
@@ -190,11 +200,11 @@ void socketIOEvent(socketIOmessageType_t type, uint8_t *payload, size_t length)
       ledConnOn();
       break;
     case sIOtype_EVENT:                                    // is event receive
-      USE_SERIAL.printf("[IOc] get event: %s\n", payload); // socketById.emit("socket-id", socket.id) --> ["socket-id","go52jjEsej3TpULMAAAB"]
-      // String socketId=parsePayload(payload,false);  //get data
+      USE_SERIAL.printf("[IOc] get event: %s\n", payload); // socketById.emit("socket-id", socket.id) -->
+                                                           // ["socket-id","go52jjEsej3TpULMAAAB"]
       if (!isGetSocketId)            // if device socket id has'nt.
         sendServerJoinData(payload); //  join the socket-io server room  with socket id and device id.
-        
+
       eventDataOperations(payload);
       break;
     case sIOtype_ACK:
@@ -243,37 +253,37 @@ String parsePayload(uint8_t *payload, bool isEventNameData)
 }
 
 void eventDataOperations(uint8_t *payload) {
-  
+
   String eventName = parsePayload(payload, true);
   String eventData = parsePayload(payload, false);
 
-  if(eventName=="led1-on"){
+  if (eventName == "led1-on") {
     led1On();
   }
-  if(eventName=="led1-off"){
+  if (eventName == "led1-off") {
     led1Off();
   }
-  if(eventName=="led2-on"){
+  if (eventName == "led2-on") {
     led2On();
   }
-  if(eventName=="led2-off"){
+  if (eventName == "led2-off") {
     led2Off();
   }
-  if(eventName=="relay1"){
+  if (eventName == "relay1") {
     relay1On();
     delay(1500);
     relay1Off();
   }
-  if(eventName=="relay2"){
+  if (eventName == "relay2") {
     relay2On();
     delay(1500);
     relay2Off();
   }
-   if(eventName=="temp-humidty"){
-    sendServerTempHumidityData(temperature,humidity);
+  if (eventName == "temp-humidty") {
+    sendServerTempHumidityData(temperature, humidity);
   }
 
-   USE_SERIAL.println(eventName+","+eventData);
+  USE_SERIAL.println(eventName + "," + eventData);
 }
 
 void sendServerJoinData(uint8_t *payload)
@@ -396,7 +406,7 @@ void sendServerANValueData(int anValue)
   USE_SERIAL.println(output); // ["login-user",{login_device_id: 62164,
 }
 
-void sendServerInfraredSensData(bool data)
+void sendServerInfraredSensData(bool data, bool testing)
 {
   DynamicJsonDocument doc(1024);
   JsonArray array = doc.to<JsonArray>();
@@ -411,8 +421,10 @@ void sendServerInfraredSensData(bool data)
     object["sensor_value"] = "ON-Object Detected";
   else
     object["sensor_value"] = "OFF";
-
-
+  if (testing) {
+    object["time_stamp"] = (uint32_t)now;
+    object["sample_count"] = sampleDataSendCount;
+  }
   /* nodejs side :
       login_user: 'NODE-MCU',
       login_device_id: 62164,
@@ -428,25 +440,25 @@ void sendServerInfraredSensData(bool data)
     isGetSocketId = true;
   }
   // Print JSON for debugging  example print :
-  USE_SERIAL.println(output); // ["login-user",{login_device_id: 62164,
+  if(!TESTING) USE_SERIAL.println(output); // ["login-user",{login_device_id: 62164,
 }
 
 void sendServerTagData()
 {
-  String tagId="";
-  String tagRemain="";
+  String tagId = "";
+  String tagRemain = "";
 
-  for(int i=0; i<5;i++){
-    int rnd=random(10, 255);
-    String str=String(rnd,HEX);
+  for (int i = 0; i < 5; i++) {
+    int rnd = random(10, 255);
+    String str = String(rnd, HEX);
     str.toUpperCase();
-    tagId+=str+" ";
+    tagId += str + " ";
   }
-  tagId.remove(tagId.length()-1);
+  tagId.remove(tagId.length() - 1);
   //  tagId.toUpperCase();
-  
-  tagRemain=String(random(10, 255));
-  
+
+  tagRemain = String(random(10, 255));
+
   DynamicJsonDocument doc(1024);
   JsonArray array = doc.to<JsonArray>();
 
@@ -457,7 +469,7 @@ void sendServerTagData()
   object["login_device_id"] = deviceId;
   object["socket_id"] = socketId;
   object["tag_id"] = tagId;
-  object["tag_remain"] =tagRemain;
+  object["tag_remain"] = tagRemain;
 
   /* nodejs side :
       login_user: 'NODE-MCU',
@@ -475,6 +487,7 @@ void sendServerTagData()
   // Print JSON for debugging  example print :
   USE_SERIAL.println(output); // ["login-user",{login_device_id: 62164,
 }
+
 
 // index=segment_number, 1 start point.
 char *splitStr(char *input_string, char *separator, int segment_number)

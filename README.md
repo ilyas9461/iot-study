@@ -17,6 +17,7 @@
 Bu çalışmada test amaçlı olark bir IOT yapısı kurgulanmıştır.
 Donanım kısımında;
 
+
 - Node MCU ESP-12E
 - DHT11 nem ve sıcaklık sensörü
 - Infrared yaklaşım sensörü
@@ -38,31 +39,33 @@ Server kısmında ;
 - Vue3 Composition Api
 
 ## Çalışma Şekli
-Donanım sensörlerden aldığı bilgileri belirli peryotlarla server kısmına uygun olay isimleri ve verileri ekleyerek gönderirken, yaklaşım sensöründen sinyal geldiği anda gönderme işlemini gerçekleştirir. Random olarak oluışturulan değerlerden oluşan bir veri yapısıda kurgulanmış ve belirli süre aralıklarıyla gönderilmiştir.
+Donanım sensörlerden aldığı bilgileri belirli peryotlarla server kısmına uygun olay isimleri ve verilerini ekleyerek gönderirken, yaklaşım sensöründen sinyal geldiği anda gönderme işlemini gerçekleştirir. Random olarak oluışturulan değerlerden oluşan bir veri seti de kurgulanmış ve belirli süre aralıklarıyla gönderilmiştir.
 
-Donanım ve istemci kısım aynı odaya kayıt edilmiştir. Server ikisi arasında köprü görevi görür. Socket io 'nun iki yönlü iletişim özelliği sayesinde istemci ve donanım tarafından olay tabanlı olarak gönderilen veriler anında işlenebilmiştir.
+Donanım ve istemcinin (frontend) aynı odaya katılması sağlanmıştır. Server ikisi arasında köprü görevi görür. Socket io 'nun iki yönlü iletişim özelliği sayesinde istemci ve donanım tarafından olay tabanlı olarak gönderilen veriler anında işlenebilmiştir.
 
-Yerelde çalışırken cors ile ilgili problemler yaşanmıştır. Server ve istemci tarafında koda gerekli eklemeler ve düzenlemeler yapılmıştır.
+Yerelde çalışırken "cors" ile ilgili problemler yaşanmıştır. Server ve istemci tarafında koda gerekli eklemeler ve düzenlemeler yapılmıştır.
 
-PostgreSql veri tabanına kullanıcılarla ve sensör dataları ile ilgili veriler yazılmış ve istemci tarafında bu veriler çekilerek gösterilmiştir. Böylece socket io ile beraber istemiciden gelen veri tabanı istekleri de gerçekleştirilmiştir.
+PostgreSql veri tabanına kullanıcılarla ve sensör dataları ile ilgili veriler yazılmış ve istemci tarafından bu veriler çekilerek gösterilmiştir. Böylece socket io ile beraber istemiciden gelen veri tabanı istekleri de gerçekleştirilmiştir.
 
 ### Test Çalışmaları
 Testler yerel server ve bir gsm firmasının superbox adı verilen wifi modemi ile yapılmıştır.
 Farklı modem modellerinde özellikle mesafe ile ilgili sonuçlar benzer olmayabilir.
 
 ### 1- Bağlantı Mesafesi
- Donanım 12V bir aküye bağlanarak yaklaşık 900 metre kare ve kare şeklinde iki katlı, alt ve üst katta duvarlarla bölünmüş aalnların ve kolonların  bulunduğu bir üretim atölyesinde dip noktalar dahil her noktaya ve bahçeye gidilerek bağlantı durumu gözlenmiştir.
+Donanım 12V bir aküye bağlanarak yaklaşık 900 metre kare ve kare şeklinde iki katlı, alt ve üst katta duvarlarla bölünmüş alanların ve kolonların  bulunduğu bir üretim atölyesinde dip noktalar dahil her noktaya ve bahçeye gidilerek bağlantı durumu gözlenmiştir.
+
 Bu alanda bağlantının kopmadığı görülmüştür.  
 
-Sonrasında ise dınşarıya çıkılarak binadan  uzaklşılmış yaklaşık 50m mesafede bağlantının koptuğu gözlenmiştir. 
+Sonrasında ise dışarıya çıkılarak binadan  uzaklşılmış yaklaşık 50m mesafede bağlantının koptuğu gözlenmiştir. 
 
-Yapılan saha çalışmasında cep telefonunun kablosuz modemi gördüğü her noktada iletişimin sağlandığı sonucuna varılmıştır.
+Yapılan saha çalışmasında cep telefonunun kablosuz modemi gördüğü her noktada iletişimin sağlandığı sonucuna varılmıştır. 
+(Dikkat, cep telefonu modeline göre de değişiklik olabilir.)
 
 ### 2- Veri Gönderme Hızı
 
-Socket io bağlantısına gönderilecek verilerin minumum zaman aralığındaki durumu tespit edilmeye çalışılmıştır. Burada amaç iki veri arasındaki minumum zaman  ve bu veriler veri tabanına kaydedilirken veya gönderilirken bir kayıp oluyor mu tespit etmek.
+Socket io bağlantısına gönderilecek verilerin minumum zaman aralığındaki durumu tespit edilmeye çalışılmıştır. Burada amacımız iki veri arasındaki minumum zaman  ve bu veriler veri tabanına kaydedilirken veya gönderilirken bir kayıp oluyor mu tespit etmektir.
 
-Bunun için Node Mcu içersindeki yazılım düzenlemiş ve TESTING isimli bir sabit oluşturularak sistem test aşamasına alınmıştır. Infrared yakınlık sensörü kod yapısı teste göre düzenlenmiştir. Veri yapısı şu şekildedir ;
+Bunun için Node mcu içersindeki yazılım düzenlemiş ve TESTING isimli bir sabit oluşturularak sistem test aşamasına alınmıştır. Infrared yakınlık sensörü kod yapısı teste göre düzenlenerek sensörün tetiklenmmesi ile veriler gönderilmiştir.. Veri yapısı şu şekildedir ;
 
 <p  align="center">
 <img src="img/test_veri_yapisi.png" alt="pelus" width="300" style="margin-left:10px">
@@ -77,13 +80,13 @@ Cihaz resetlenerek 30 saniye süre ile sensör tetiklenmiştir. Elde edilen sonu
 <img src="img/test_db_ms2.png" alt="pelus" width="400" style="margin-left:10px">
 </p>
 
-- Veri tabanına yazılan satrı sayısı :6162
+- Veri tabanına yazılan satır sayısı :6162
 - Son veri zaman damgası: 84961 mS
 - ilk veri zaman damgası: 56434 mS
 
 - Buna göre :(81063-49767)/6162  =4.629 mS 
 
-Bu verilerin hepsinin sıra atlamadan veri tabanınada yazıldığı görülmüştür.
+Yapılan incelemede verilerin hepsinin sıra atlamadan veri tabanınada yazıldığı görülmüştür.
 
 ### Bazı Ekran Görüntüleri
 <br>
