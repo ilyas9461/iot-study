@@ -42,18 +42,51 @@ Donanım sensörlerden aldığı bilgileri belirli peryotlarla server kısmına 
 
 Donanım ve istemci kısım aynı odaya kayıt edilmiştir. Server ikisi arasında köprü görevi görür. Socket io 'nun iki yönlü iletişim özelliği sayesinde istemci ve donanım tarafından olay tabanlı olarak gönderilen veriler anında işlenebilmiştir.
 
-Yapılan saha çalışmasında cep telefonunun kablosuz modemi gördüğü her noktada iletişimin sağlandığı görülmüştür.
-
 Yerelde çalışırken cors ile ilgili problemler yaşanmıştır. Server ve istemci tarafında koda gerekli eklemeler ve düzenlemeler yapılmıştır.
 
+PostgreSql veri tabanına kullanıcılarla ve sensör dataları ile ilgili veriler yazılmış ve istemci tarafında bu veriler çekilerek gösterilmiştir. Böylece tek socket io ile beraber istemiciden gelen veri tabanı istekleri de gerçeklkeştirilmiştir.
+
+### Test Çalışmaları
+
+### 1- Bağlantı Mesafesi
+ Donanım 12V bir aküye bağlanarak yaklaşık 900 metre kare ve kare şeklinde iki katlı, alt ve üst katta duvarlarla bölünmüş aalnların ve kolonların  bulunduğu bir üretim atölyesinde dip noktalar dahil her noktaya ve bahçeye gidilerek bağlantı durumu gözlenmiştir.
+Bu alanda bağlantının kopmadığı görülmüştür.  
+
+Sonrasında ise dınşarıya çıkılarak binadan  uzaklşılmış yaklaşık 50m mesafede bağlantının koptuğu gözlenmiştir. 
+
+Yapılan saha çalışmasında cep telefonunun kablosuz modemi gördüğü her noktada iletişimin sağlandığı sonucuna varılmıştır.
+
+### 2- Veri Gönderme Hızı
+
+Socket io bağlantısına gönderilecek verilerin minumum zaman aralığındaki durumu tespit edilmeye çalışılmıştır. Burada amaç iki veri arasındaki minumum zaman  ve bu veriler veri tabanına kaydedilirken veya gönderilirken bir kayıp oluyor mu tespit etmek.
+
+Bunun için Node Mcu içersindeki yazılım düzenlemiş ve TEST isimli bir sabit oluşturularak sistem test aşamasına alınmıştır. Infrared yakınlık sensörü kod yapısı teste göre düzenlenmiştir. Veri yapısı şu şekildedir ;
+
 <p  align="center">
-<img src="img/istemci1.png" alt="pelus" width="500" style="margin-left:10px">
-<img src="img/istemci.png" alt="pelus" width="500" style="margin-left:10px">
+<img src="img/test_veri_yapisi.png" alt="pelus" width="300" style="margin-left:10px">
+</p>
+
+Zaman damgası ve örnek data sayısı da eklenerek kayıp veri kontrolü yapılmıştır. Node mcu sensör tetiklendiğinde sadece bu veriyi json formatına çevirerek göndermektedir. Gecikmeler işlemleri gerçekleştiren  fonksiyonların gecikmesidir.
+
+Cihaz resetlenerek 30 saniye süre ile sensör tetiklenmiştir. Elde edilen sonuçlar şu şekildedir :
+
+- Veri tabanına yazılan satrı sayısı :1450
+- Son veri zaman damgası: 81063 mS
+- ilk veri zaman damgası: 49767 mS
+
+- Buna göre :(81063-49767)/1450  =21.5mS
+
+
+
+
+<p  align="center">
+<img src="img/istemci1.png" alt="pelus" width="400" style="margin-left:10px">
+<img src="img/istemci.png" alt="pelus" width="400" style="margin-left:10px">
 </p>
 
 <p  align="center">
-<img src="img/server_kod.png" alt="pelus" width="500" tyle="margin-left:10px">
-<img src="img/vue3_kod.png" alt="pelus" width="500" style="margin-left:10px">
+<img src="img/server_kod.png" alt="pelus" width="400" tyle="margin-left:10px">
+<img src="img/vue3_kod.png" alt="pelus" width="400" style="margin-left:10px">
 </p>
 
 ## Kullanılan Teknolojiler
@@ -67,7 +100,7 @@ Yerelde çalışırken cors ile ilgili problemler yaşanmıştır. Server ve ist
 
 ###  Örnek çalışma videosu :
 
-<a href="https://youtu.be/_q_xxLe8X9k" target="_blank">
+<a href="https://youtu.be/AQEl6YUnvLM" target="_blank">
      <img src="https://camo.githubusercontent.com/241d4106ff5edca2ee25e04dcf4546fad9d20b626f7a10990307e8f83e95459f/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f796f75747562652d2532334646303030302e7376673f267374796c653d666f722d7468652d6261646765266c6f676f3d796f7574756265266c6f676f436f6c6f723d7768697465253232" alt="youtube">
 </a>
 
