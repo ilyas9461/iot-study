@@ -28,7 +28,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';     //optional for column grouping
 
-const app = createApp(App); //create app
+const app = createApp(App);
 
 app.use(PrimeVue,{ripple: true});
 app.use(store);

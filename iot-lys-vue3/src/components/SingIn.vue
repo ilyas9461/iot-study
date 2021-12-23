@@ -6,15 +6,19 @@
         <div>
           <img src="../assets/images/nokey.jpg" alt="Image" height="50" class="mb-3 border-round" />
         </div>
+
         <a class="font-medium no-underline ml-2 text-blue-500 cursor-pointer" @click="SignInClick">
           <span class="text-600 font-medium line-height-3">Don't have an account? </span>Create today!</a
         >
       </div>
+
       <div>
         <label for="email" class="block text-500 font-medium mb-2">UserID</label>
         <InputText id="email" type="text" class="w-full mb-3 p-inputtext-sm" v-model="user_id" />
+
         <label for="password" class="block text-500 font-medium mb-2">Password</label>
         <InputText id="password" type="password" class="w-full mb-3 p-inputtext-sm" v-model="user_pass" />
+
         <div class="flex align-items-center justify-content-between mb-6">
           <div class="flex align-items-center">
             <Checkbox v-model="checked" id="rememberme" :binary="true" class="mr-2"></Checkbox>
@@ -22,6 +26,7 @@
           </div>
           <a class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot your password?</a>
         </div>
+
         <Button label="Sign In" icon="pi pi-user" class="w-full" @click="loginClick"></Button>
       </div>
     </div>
@@ -35,6 +40,9 @@ import LoginService from "../services/LoginService";
 
 export default {
   name: "SignIn",
+  // props: {
+  //   msg: String,
+  //}
   setup() {
     const socket = inject("socket");
 

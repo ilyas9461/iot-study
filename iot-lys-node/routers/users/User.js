@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const jwtAuth = require("../../public/js/jwt_token");
 const pgSqlDB = require("../../public/js/db_class");
 
+
 let token;
 
 let user = {
@@ -40,7 +41,6 @@ userRoute.post("/login", async function (req, res) {
   
           user.token = token;
          // console.log("token :", user);
-          // res.set('Access-Control-Allow-Origin', '*');
           res.status(200).send(user);
           res.end();
         }

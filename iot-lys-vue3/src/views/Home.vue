@@ -11,6 +11,7 @@
           <template #start>
             <img alt="logo" src="..\assets\images\dock\Actions-network-connect-icon.png" height="40" class="p-mr-5" />
           </template>
+
           <template #end>
             <InputText placeholder="Search" type="text" />
           </template>
@@ -29,6 +30,7 @@
         </div>
 
         <div class="surface-0 p-4 shadow-2 border-round">
+
           <Button type="button" class="p-button-outlined p-button-success ml-2 mt-2" @click="relay1Click">
             <img alt="logo" src="..\assets\images\circle-btn-on.png" width="100" height="100" />
             <span class="p-ml-2 p-text-bold">Relay 1</span>
@@ -39,6 +41,7 @@
           </Button>
         </div>
       </div>
+
       <div class="col-12 md:col-6 lg:col-8">
         <div class="grid">
           <div class="col-12 md:col-6 lg:col-3">
@@ -48,7 +51,6 @@
                   <span class="block text-500 font-medium mb-3">Temperature</span>
                   <div class="text-900 font-medium text-xl">{{ temperature }}C - {{ humidity }}%</div>
                 </div>
-
                 <div class="flex align-items-center justify-content-center bg-blue-100 border-round" style="width: 2.5rem; height: 2.5rem">
                   <i>
                     <Button label="info" class="p-button-success p-button-text" @click="btnTempClick">
@@ -68,7 +70,7 @@
                   <span class="block text-500 font-medium mb-3">Analogue Value</span>
                   <div class="text-900 font-medium text-xl">{{ analogueValue }}</div>
                 </div>
-                <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width: 2.5rem; height: 2.5rem">
+                <div class="flex align-items-center justify-content-center bg-orange-100 border-round" style="width: 2.5rem; height: 2.5rem">                  
                   <i><img alt="temp-img" src="..\assets\images\volume-icon.png" width="48" height="48" /></i>
                 </div>
               </div>
@@ -76,6 +78,7 @@
               <span class="text-500">10K Pot</span>
             </div>
           </div>
+
           <div class="col-12 md:col-6 lg:col-3">
             <div class="surface-0 shadow-2 p-3 border-1 border-50 border-round">
               <div class="flex justify-content-between mb-3">
@@ -91,6 +94,7 @@
               <span class="text-500">Infrared</span>
             </div>
           </div>
+
           <div class="col-12 md:col-6 lg:col-3">
             <div class="surface-0 shadow-2 p-3 border-1 border-50 border-round">
               <div class="flex flex-column">
@@ -122,11 +126,33 @@
               <Column field="tag_id" header="TAG ID" class="text-sm"></Column>
               <Column field="tag_remain" header="Remaining" class="text-sm"></Column>
               <Column field="login_device_id" header="Toy ID" class="text-sm"></Column>
-              <!-- <Column field="date_time" header="Date-Time"></Column> -->
             </DataTable>
           </div>
         </div>
       </div>
+    </div>
+    <div>
+      <Dialog header="Temperature-Humidity Table" v-model:visible="displayMaximizable" :style="{ width: '50vw' }" :maximizable="true" :modal="true">
+        <p class="p-m-0">
+          <DataTable :value="tempHumidityTableData" class="p-datatable-sm" :paginator="true" :rows="10">
+            <Column field="temperature" header="Temperature" class="text-sm"></Column>
+            <Column field="humidity" header="Humidity" class="text-sm"></Column>
+            <Column field="date_time" header="Date Time" class="text-sm"></Column>
+          </DataTable>
+        </p>
+      </Dialog>
+
+      <Dialog header="Tag Data Table" v-model:visible="displayMaximizableTagData" :style="{ width: '50vw' }" :maximizable="true" :modal="true">
+        <p class="p-m-0">
+          <DataTable :value="tagTableData" class="p-datatable-sm" :paginator="true" :rows="10">
+            <Column field="user_name" header="User Name" class="text-sm"></Column>
+            <Column field="tag_id" header="Tag ID" class="text-sm"></Column>
+             <Column field="tag_remain" header="Remain"></Column>
+            <Column field="date_time" header="Date Time" class="text-sm"></Column>
+           
+          </DataTable>
+        </p>
+      </Dialog>
     </div>
   </div>
 </template>
@@ -134,6 +160,7 @@
 <script>
 import { ref, onMounted, inject } from "vue";
 import { useToast } from "primevue/usetoast";
+import DataService from "../services/DataService";
 export default {
   name: "Home",
   props: {
@@ -147,119 +174,36 @@ export default {
 
     const items = ref([
       {
-        label: "File",
-        icon: "pi pi-fw pi-file",
-        items: [
-          {
-            label: "New",
-            icon: "pi pi-fw pi-plus",
-            items: [
-              {
-                label: "Bookmark",
-                icon: "pi pi-fw pi-bookmark",
-              },
-              {
-                label: "Video",
-                icon: "pi pi-fw pi-video",
-              },
-            ],
-          },
-          {
-            label: "Delete",
-            icon: "pi pi-fw pi-trash",
-          },
-          {
-            separator: true,
-          },
-          {
-            label: "Export",
-            icon: "pi pi-fw pi-external-link",
-          },
-        ],
+        label: "Home",
+        icon: "pi pi-home", 
       },
       {
         label: "Edit",
         icon: "pi pi-fw pi-pencil",
-        items: [
-          {
-            label: "Left",
-            icon: "pi pi-fw pi-align-left",
-          },
-          {
-            label: "Right",
-            icon: "pi pi-fw pi-align-right",
-          },
-          {
-            label: "Center",
-            icon: "pi pi-fw pi-align-center",
-          },
-          {
-            label: "Justify",
-            icon: "pi pi-fw pi-align-justify",
-          },
-        ],
+  
       },
       {
         label: "Users",
         icon: "pi pi-fw pi-user",
-        items: [
-          {
-            label: "New",
-            icon: "pi pi-fw pi-user-plus",
-          },
-          {
-            label: "Delete",
-            icon: "pi pi-fw pi-user-minus",
-          },
-          {
-            label: "Search",
-            icon: "pi pi-fw pi-users",
-            items: [
-              {
-                label: "Filter",
-                icon: "pi pi-fw pi-filter",
-                items: [
-                  {
-                    label: "Print",
-                    icon: "pi pi-fw pi-print",
-                  },
-                ],
-              },
-              {
-                icon: "pi pi-fw pi-bars",
-                label: "List",
-              },
-            ],
-          },
-        ],
+       
       },
       {
-        label: "Events",
+        label: "Tables",
         icon: "pi pi-fw pi-calendar",
         items: [
           {
-            label: "Edit",
-            icon: "pi pi-fw pi-pencil",
-            items: [
-              {
-                label: "Save",
-                icon: "pi pi-fw pi-calendar-plus",
-              },
-              {
-                label: "Delete",
-                icon: "pi pi-fw pi-calendar-minus",
-              },
-            ],
+            label: "Temp-Humidity Log",
+            icon: "pi pi-table",
+            command: () => {
+              tempHumidityClick();
+            },
           },
-          {
-            label: "Archieve",
-            icon: "pi pi-fw pi-calendar-times",
-            items: [
-              {
-                label: "Remove",
-                icon: "pi pi-fw pi-calendar-minus",
-              },
-            ],
+          {   
+            label: "Tag Data Log",
+            icon: "pi pi-table",
+             command: () => {
+              tagDataClick();
+            },
           },
         ],
       },
@@ -290,9 +234,15 @@ export default {
     const infraredValue = ref("OFF");
     const btnTempHumClick = ref(false);
     const tagData = ref({ data: [] });
+    const displayMaximizable = ref(false);
+    const displayMaximizableTagData = ref(false);
+    const tempHumidityTableData=ref();
+    const tagTableData=ref();
+
+    const dataService=new DataService();
 
     onMounted(() => {
-
+      // console.log("props User:", props.token);
       login_user.value = props.user_id;
       login_device_id.value = parseInt(props.device_id, 10).toString(16).toUpperCase();
 
@@ -304,8 +254,72 @@ export default {
       socket.emit("login-user", data); //request join
     });
 
+    const openMaximizable = () => {
+      displayMaximizable.value = true;
+    };
+    const openMaximizableTagData = () => {
+     displayMaximizableTagData.value  = true;
+    };
+
+    const closeMaximizable = () => {
+      displayMaximizable.value = false;
+      displayMaximizableTagData.value =false;
+    };
+
+    const tempHumidityClick=()=>{
+        let user = {
+        login_user: props.user_id,
+        login_device_id: props.device_id,
+        socket_id: socket.id,
+      };
+      dataService.getTempHumidityData(user).then((res,err)=>{
+         if(!err){
+          // console.log("temp Hum Data :",res.rows);
+          let arr=res.rows;
+
+          arr.forEach((element) => {
+            element.date_time= element.date_time.replace('T', ' ');
+            element.date_time=element.date_time.replace('.000Z', '');
+          });
+          console.log(arr);
+           tempHumidityTableData.value=arr;
+          openMaximizable();
+         }
+          
+      });
+    };
+    const tagDataClick=()=>{
+        let user = {
+        login_user: props.user_id,
+        login_device_id: props.device_id,
+        socket_id: socket.id,
+      };
+
+      dataService.getTagData(user).then((res,err)=>{
+         if(!err){
+          // console.log("temp Hum Data :",res.rows);
+          let arr=res.rows;
+
+          arr.forEach((element) => {
+            element.date_time= element.date_time.replace('T', ' ');
+            element.date_time=element.date_time.replace('.000Z', '');
+          });
+          console.log(arr);
+          tagTableData.value=arr;
+          openMaximizableTagData();
+         }
+          
+      });
+    };
     const showSocketMessage = (data) => {
       console.log("showSocketMessage :", data);
+      // toast.add({
+      //   severity: "success",
+      //   summary: "Socket-io",
+      //   detail: data,
+      //   life: 3000,
+
+      // });
     };
 
     const btnTempClick = () => {
@@ -317,6 +331,8 @@ export default {
     const InputSwitch1Click = () => {
       console.log("InputSwitch1Click:", checked1.value);
       if (!checked1.value) {
+        //true
+
         socket.emit("led1-on", "ON");
       } else {
         socket.emit("led1-off", "OFF");
@@ -358,11 +374,13 @@ export default {
 
     socket.on("time_stamp", (data) => {
       console.log("time_stamp:", data);
+  
       device_online.value = true;
     });
 
     socket.on("temp-humidity", (data) => {
       console.log("temp-humidity:", data);
+   
       temperature.value = data.temperature;
       humidity.value = data.humidity;
 
@@ -382,6 +400,7 @@ export default {
       console.log("analogue-value:", data);
       analogueValue.value = data.analogue_value;
     });
+    
     socket.on("device-disconnect", () => {
       console.log("disconnect:");
       device_online.value = false;
@@ -389,9 +408,10 @@ export default {
 
     socket.on("infrared-value", (data) => {
       console.log("infrared-value:", data);
-      infraredValue.value = data.sensor_value;    
+      infraredValue.value = data.sensor_value;
+
       beep();
-      
+
       if (data.sensor_value.includes("ON")) {
         toast.add({
           severity: "success",
@@ -411,14 +431,21 @@ export default {
       delete obj.login_user;
       delete obj.socket_id;
 
-      tagData.value.data.push(obj); //proxy değer oluşturuyor bundan dolayı tablo ya nesne dönmüyor
-      // data yı object yapmak için :
+      tagData.value.data.push(obj); 
       rawObject.value = JSON.parse(JSON.stringify(tagData.value.data)); //find proxy data
 
       console.log(rawObject);
     });
 
     function beep(duration, frequency, volume, type, callback) {
+      //All arguments are optional:
+
+      //duration of the tone in milliseconds. Default is 500
+      //frequency of the tone in hertz. default is 440
+      //volume of the tone. Default is 1, off is 0.
+      //type of tone. Possible values are sine, square, sawtooth, triangle, and custom. Default is sine.
+      //callback to use on end of tone
+      //if you have another AudioContext class use that one, as some browsers have a limit
       var audioCtx = new (window.AudioContext || window.webkitAudioContext || window.audioContext)();
       var oscillator = audioCtx.createOscillator();
       var gainNode = audioCtx.createGain();
@@ -461,6 +488,14 @@ export default {
       relay2Click,
       tagData,
       rawObject,
+      displayMaximizable,
+      openMaximizable,
+      closeMaximizable,
+      tempHumidityClick,
+      tempHumidityTableData,
+      tagTableData,
+      openMaximizableTagData,
+      displayMaximizableTagData ,
     };
   },
 };

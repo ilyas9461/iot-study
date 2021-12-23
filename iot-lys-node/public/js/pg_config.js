@@ -1,9 +1,9 @@
 const { Pool} = require('pg');
 
 const pool = new Pool({
-  user: 'postgres' , //process.env.LOCAL_USER,
-  database: 'iot-lys', //process.env.LOCAL_DATABASE,
-  password: '*********', //process.env.LOCAL_PASS,
+  user: 'postgres' , 
+  database: 'iot-lys', 
+  password: '*****', 
   port: 5432,
   host: 'localhost',
 });

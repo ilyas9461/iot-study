@@ -44,9 +44,11 @@ Donanım ve istemci kısım aynı odaya kayıt edilmiştir. Server ikisi arasın
 
 Yerelde çalışırken cors ile ilgili problemler yaşanmıştır. Server ve istemci tarafında koda gerekli eklemeler ve düzenlemeler yapılmıştır.
 
-PostgreSql veri tabanına kullanıcılarla ve sensör dataları ile ilgili veriler yazılmış ve istemci tarafında bu veriler çekilerek gösterilmiştir. Böylece tek socket io ile beraber istemiciden gelen veri tabanı istekleri de gerçeklkeştirilmiştir.
+PostgreSql veri tabanına kullanıcılarla ve sensör dataları ile ilgili veriler yazılmış ve istemci tarafında bu veriler çekilerek gösterilmiştir. Böylece socket io ile beraber istemiciden gelen veri tabanı istekleri de gerçekleştirilmiştir.
 
 ### Test Çalışmaları
+Testler yerel server ve bir gsm firmasının superbox adı verilen wifi modemi ile yapılmıştır.
+Farklı modem modellerinde özellikle mesafe ile ilgili sonuçlar benzer olmayabilir.
 
 ### 1- Bağlantı Mesafesi
  Donanım 12V bir aküye bağlanarak yaklaşık 900 metre kare ve kare şeklinde iki katlı, alt ve üst katta duvarlarla bölünmüş aalnların ve kolonların  bulunduğu bir üretim atölyesinde dip noktalar dahil her noktaya ve bahçeye gidilerek bağlantı durumu gözlenmiştir.
@@ -60,30 +62,36 @@ Yapılan saha çalışmasında cep telefonunun kablosuz modemi gördüğü her n
 
 Socket io bağlantısına gönderilecek verilerin minumum zaman aralığındaki durumu tespit edilmeye çalışılmıştır. Burada amaç iki veri arasındaki minumum zaman  ve bu veriler veri tabanına kaydedilirken veya gönderilirken bir kayıp oluyor mu tespit etmek.
 
-Bunun için Node Mcu içersindeki yazılım düzenlemiş ve TEST isimli bir sabit oluşturularak sistem test aşamasına alınmıştır. Infrared yakınlık sensörü kod yapısı teste göre düzenlenmiştir. Veri yapısı şu şekildedir ;
+Bunun için Node Mcu içersindeki yazılım düzenlemiş ve TESTING isimli bir sabit oluşturularak sistem test aşamasına alınmıştır. Infrared yakınlık sensörü kod yapısı teste göre düzenlenmiştir. Veri yapısı şu şekildedir ;
 
 <p  align="center">
 <img src="img/test_veri_yapisi.png" alt="pelus" width="300" style="margin-left:10px">
 </p>
 
-Zaman damgası ve örnek data sayısı da eklenerek kayıp veri kontrolü yapılmıştır. Node mcu sensör tetiklendiğinde sadece bu veriyi json formatına çevirerek göndermektedir. Gecikmeler işlemleri gerçekleştiren  fonksiyonların gecikmesidir.
+Zaman damgası ve örnek data sayısı da eklenerek kayıp veri kontrolü yapılması sağlanmıştır. Node mcu sensör tetiklendiğinde sadece bu veriyi json formatına çevirerek göndermektedir. Gecikmeler işlemleri gerçekleştiren  fonksiyonların gecikmesidir.
 
 Cihaz resetlenerek 30 saniye süre ile sensör tetiklenmiştir. Elde edilen sonuçlar şu şekildedir :
 
-- Veri tabanına yazılan satrı sayısı :1450
-- Son veri zaman damgası: 81063 mS
-- ilk veri zaman damgası: 49767 mS
-
-- Buna göre :(81063-49767)/1450  =21.5mS
-
-
-
-
 <p  align="center">
-<img src="img/istemci1.png" alt="pelus" width="400" style="margin-left:10px">
-<img src="img/istemci.png" alt="pelus" width="400" style="margin-left:10px">
+<img src="img/test_db_ms1.png" alt="pelus" width="400" style="margin-left:10px">
+<img src="img/test_db_ms2.png" alt="pelus" width="400" style="margin-left:10px">
 </p>
 
+- Veri tabanına yazılan satrı sayısı :6162
+- Son veri zaman damgası: 84961 mS
+- ilk veri zaman damgası: 56434 mS
+
+- Buna göre :(81063-49767)/6162  =4.629 mS 
+
+Bu verilerin hepsinin sıra atlamadan veri tabanınada yazıldığı görülmüştür.
+
+### Bazı Ekran Görüntüleri
+<br>
+<p  align="center">
+<img src="img/istemci1.png" alt="pelus" width="425" style="margin-left:10px">
+<img src="img/istemci.png" alt="pelus" width="400" style="margin-left:10px">
+</p>
+<br><br>
 <p  align="center">
 <img src="img/server_kod.png" alt="pelus" width="400" tyle="margin-left:10px">
 <img src="img/vue3_kod.png" alt="pelus" width="400" style="margin-left:10px">
@@ -95,6 +103,7 @@ Cihaz resetlenerek 30 saniye süre ile sensör tetiklenmiştir. Elde edilen sonu
 - NOde MCU ESP-12E.
 - Node js, Expres, socket io ...
 - Vue3 Composition APi
+- PostgreSQL
 
 ```
 

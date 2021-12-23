@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-exports.verifyToken=verifyToken;  // nesne olarak exports ediliyor. 
+exports.verifyToken=verifyToken;  
 function verifyToken(req, res, next) {
   try {
     // check header or url parameters or post parameters for token
@@ -44,6 +44,6 @@ exports.generateAccessToken=generateAccessToken;
 function generateAccessToken(user) {
   return jwt.sign(user, process.env.TOKEN_SECRET, {
       expiresIn: '1800s'
-  }); //1800s=30 minutes
+  }); //1800s=30 minute
 }
 

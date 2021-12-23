@@ -20,6 +20,9 @@ import LoginService from "../services/LoginService";
 
 export default {
   name: "RegisterForm",
+  // props: {
+  //   msg: String,
+  //}
   setup() {
     const userID = ref();
     const userPass = ref();
@@ -55,4 +58,6 @@ export default {
   },
 };
 </script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped></style>
