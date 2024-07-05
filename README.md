@@ -110,7 +110,7 @@ Upon examination, it was seen that all of the data was written to the database w
 ###  Sample working video :
 
 <a href="https://youtu.be/AQEl6YUnvLM" target="_blank">
-     <img src="./img/youtube.png" alt="youtube">
+     <img src="./img/youtube.png" alt="youtube" wiedth="55">
 </a>
 
 
