@@ -3,11 +3,8 @@
 #define TESTING true
 #define USE_SERIAL Serial  //Serial1
 
-#define SSID  "Superbox_Wifi_4286"         // Enter SSID here
-#define PASSWORD "LB44wH34M3"              //Enter Password here
-
-//#define SSID  "Turknet"                     // Enter SSID here
-//#define PASSWORD "143db8ed43"              //Enter Password here
+#define SSID  "Superbox_Wifi_xxxx"         // Enter SSID here
+#define PASSWORD "LB44xxxxx"              //Enter Password here
 
 #define SOCKET_SERVER_IP  "192.168.1.165" //"192.168.1.124"
 #define SOCKET_PORT    3000
