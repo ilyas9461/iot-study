@@ -63,7 +63,7 @@ void setup()
   lcd.setCursor(0, 0);
   lcd.print("Socketio example");
   lcd.setCursor(0, 1);
-  lcd.print("ilyas9461-->WiFi");
+  lcd.print("lys-9461-->WiFi");
 
   dht.setup(D1); /* D1 is used for data communication with dht11 */
 
